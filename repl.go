@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/rhafaelc/pokedexcli/internal/pokeclient"
 )
 
 type cliCommand struct {
@@ -14,8 +16,34 @@ type cliCommand struct {
 }
 
 type config struct {
-	Next     string
-	Previous string
+	client   pokeclient.Client
+	Next     *string
+	Previous *string
+}
+
+
+func startRepl(cfg *config) {
+	scanner := bufio.NewScanner(os.Stdin)
+
+	for {
+		fmt.Print("Pokedex > ")
+		scanner.Scan()
+		text := scanner.Text()
+		words := cleanInput(text)
+
+		if len(words) == 0 {
+			continue
+		}
+		cliCmd := words[0]
+		if cmd, ok := getCommands()[cliCmd]; ok {
+			err := cmd.callback(cfg)
+			if err != nil {
+				fmt.Println(err)
+			}
+		} else {
+			fmt.Println("Unknown command")
+		}
+	}
 }
 
 func getCommands() map[string]cliCommand {
@@ -42,32 +70,6 @@ func getCommands() map[string]cliCommand {
 		},
 	}
 }
-
-func startRepl() {
-	scanner := bufio.NewScanner(os.Stdin)
-	cfg := config{
-		Next: "https://pokeapi.co/api/v2/location-area",
-		Previous: "",
-	}
-
-	for {
-		fmt.Print("Pokedex > ")
-		scanner.Scan()
-		text := scanner.Text()
-		words := cleanInput(text)
-
-		if len(words) == 0 {
-			continue
-		}
-		cliCmd := words[0]
-		if cmd, ok := getCommands()[cliCmd]; ok {
-			cmd.callback(&cfg)
-		} else {
-			fmt.Println("Unknown command")
-		}
-	}
-}
-
 func cleanInput(text string) []string {
 	text = strings.ToLower(text)
 	words := strings.Fields(text)

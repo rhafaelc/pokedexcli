@@ -3,39 +3,34 @@ package main
 import (
 	"fmt"
 
-	"github.com/rhafaelc/pokedexcli/pokeclient"
 )
 
 func commandMap(c *config) error {
-	if c.Next == "" {
-		fmt.Println("you're on the last page")
-		return nil
-	}
-	locationArea, err := pokeclient.GetLocationArea(c.Next)
+	locationsArea, err := c.client.GetLocationsArea(c.Next)
 	if err != nil {
 		return err
 	}
-	c.Next = locationArea.Next
-	c.Previous = locationArea.Previous
-	for _, loc := range locationArea.Results {
-		fmt.Printf("%s\n", loc.Name)
+	c.Next = locationsArea.Next
+	c.Previous = locationsArea.Previous
+	for _, loc := range locationsArea.Results {
+		fmt.Println(loc.Name)	
 	}
 	return nil
 }
 
 func commandMapBack(c *config) error {
-	if c.Previous == "" {
+	if c.Previous == nil {
 		fmt.Println("you're on the first page")
 		return nil
 	}
-	locationArea, err := pokeclient.GetLocationArea(c.Previous)
+	locationsArea, err := c.client.GetLocationsArea(c.Previous)
 	if err != nil {
 		return err
 	}
-	c.Next = locationArea.Next
-	c.Previous = locationArea.Previous
-	for _, loc := range locationArea.Results {
-		fmt.Printf("%s\n", loc.Name)
+	c.Next = locationsArea.Next
+	c.Previous = locationsArea.Previous
+	for _, loc := range locationsArea.Results {
+		fmt.Println(loc.Name)	
 	}
 	return nil
 }
