@@ -10,7 +10,12 @@ import (
 type cliCommand struct {
 	name        string
 	description string
-	callback    func() error
+	callback    func(*config) error
+}
+
+type config struct {
+	Next     string
+	Previous string
 }
 
 func getCommands() map[string]cliCommand {
@@ -19,6 +24,16 @@ func getCommands() map[string]cliCommand {
 			name:        "help",
 			description: "Displays a help message",
 			callback:    commandHelp,
+		},
+		"map": {
+			name:        "map",
+			description: "Displays the names of 20 location areas in the Pokemon world",
+			callback:    commandMap,
+		},
+		"mapb": {
+			name:        "mapb",
+			description: "Displays previous 20 location areas in the pokemon world",
+			callback:    commandMapBack,
 		},
 		"exit": {
 			name:        "exit",
@@ -30,6 +45,11 @@ func getCommands() map[string]cliCommand {
 
 func startRepl() {
 	scanner := bufio.NewScanner(os.Stdin)
+	cfg := config{
+		Next: "https://pokeapi.co/api/v2/location-area",
+		Previous: "",
+	}
+
 	for {
 		fmt.Print("Pokedex > ")
 		scanner.Scan()
@@ -41,7 +61,7 @@ func startRepl() {
 		}
 		cliCmd := words[0]
 		if cmd, ok := getCommands()[cliCmd]; ok {
-			cmd.callback()
+			cmd.callback(&cfg)
 		} else {
 			fmt.Println("Unknown command")
 		}
