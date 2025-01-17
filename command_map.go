@@ -5,7 +5,7 @@ import (
 
 )
 
-func commandMap(c *config) error {
+func commandMap(c *config, _ *string) error {
 	locationsArea, err := c.client.GetLocationsArea(c.Next)
 	if err != nil {
 		return err
@@ -18,7 +18,7 @@ func commandMap(c *config) error {
 	return nil
 }
 
-func commandMapBack(c *config) error {
+func commandMapBack(c *config, _ *string) error {
 	if c.Previous == nil {
 		fmt.Println("you're on the first page")
 		return nil

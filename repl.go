@@ -12,7 +12,7 @@ import (
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(*config) error
+	callback    func(*config, *string) error
 }
 
 type config struct {
@@ -20,7 +20,6 @@ type config struct {
 	Next     *string
 	Previous *string
 }
-
 
 func startRepl(cfg *config) {
 	scanner := bufio.NewScanner(os.Stdin)
@@ -35,8 +34,12 @@ func startRepl(cfg *config) {
 			continue
 		}
 		cliCmd := words[0]
+		var arg1 string 
+		if len(words) > 1 {
+			arg1 = words[1]
+		}
 		if cmd, ok := getCommands()[cliCmd]; ok {
-			err := cmd.callback(cfg)
+			err := cmd.callback(cfg, &arg1)
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -62,6 +65,11 @@ func getCommands() map[string]cliCommand {
 			name:        "mapb",
 			description: "Displays previous 20 location areas in the pokemon world",
 			callback:    commandMapBack,
+		},
+		"explore": {
+			name:        "explore <area>",
+			description: "Displays pokemon in the area",
+			callback:    commandExplore,
 		},
 		"exit": {
 			name:        "exit",
