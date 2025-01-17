@@ -17,6 +17,7 @@ type cliCommand struct {
 
 type config struct {
 	client   pokeclient.Client
+	Pokedex map[string]pokeclient.Pokemon
 	Next     *string
 	Previous *string
 }
@@ -34,12 +35,13 @@ func startRepl(cfg *config) {
 			continue
 		}
 		cliCmd := words[0]
-		var arg1 string 
+		var arg1 *string
+		arg1 = nil
 		if len(words) > 1 {
-			arg1 = words[1]
+			arg1 = &words[1]
 		}
 		if cmd, ok := getCommands()[cliCmd]; ok {
-			err := cmd.callback(cfg, &arg1)
+			err := cmd.callback(cfg, arg1)
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -70,6 +72,11 @@ func getCommands() map[string]cliCommand {
 			name:        "explore <area>",
 			description: "Displays pokemon in the area",
 			callback:    commandExplore,
+		},
+		"catch": {
+			name:        "catch <pokemon>",
+			description: "Catch a pokemon and store the information to pokedex",
+			callback:    commandCatch,
 		},
 		"exit": {
 			name:        "exit",

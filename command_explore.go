@@ -3,7 +3,10 @@ package main
 import "fmt"
 
 func commandExplore(c *config, area_name *string) error {
-	exploreArea, err := c.client.GetExploreArea(area_name)
+	if area_name == nil {
+		return fmt.Errorf("No area name given")
+	}
+	exploreArea, err := c.client.GetExploreArea(*area_name)
 	if err != nil {
 		return err
 	}

@@ -7,11 +7,8 @@ import (
 	"net/http"
 )
 
-func (c *Client) GetExploreArea(area_name *string) (ExploreArea, error) {
-	if *area_name == "" {
-		return ExploreArea{}, fmt.Errorf("No area name given")
-	}
-	url := baseUrl + "/location-area/" + *area_name 
+func (c *Client) GetExploreArea(area_name string) (ExploreArea, error) {
+	url := baseUrl + "/location-area/" + area_name 
 	if data, exists := c.cache.Get(url); exists {
 		exploreArea := ExploreArea{}
 		if err := json.Unmarshal(data, &exploreArea); err != nil {
