@@ -17,7 +17,7 @@ type cliCommand struct {
 
 type config struct {
 	client   pokeclient.Client
-	Pokedex map[string]pokeclient.Pokemon
+	Pokedex  map[string]pokeclient.Pokemon
 	Next     *string
 	Previous *string
 }
@@ -78,11 +78,15 @@ func getCommands() map[string]cliCommand {
 			description: "Catch a pokemon and store the information to pokedex",
 			callback:    commandCatch,
 		},
-
 		"inspect": {
 			name:        "inspect <pokemon>",
 			description: "Inspect pokemon that is registered in pokedex",
 			callback:    commandInspect,
+		},
+		"pokedex": {
+			name:        "pokedex",
+			description: "Check your pokedex",
+			callback:    commandPokedex,
 		},
 		"exit": {
 			name:        "exit",
